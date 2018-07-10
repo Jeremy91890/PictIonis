@@ -1,0 +1,6 @@
+framework module Pods_PictIonis {
+  umbrella header "Pods-PictIonis-umbrella.h"
+
+  export *
+  module * { export * }
+}

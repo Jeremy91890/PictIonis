@@ -1,0 +1,6 @@
+framework module Pods_PictIonisTests {
+  umbrella header "Pods-PictIonisTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
