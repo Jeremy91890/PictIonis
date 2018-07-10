@@ -10,8 +10,13 @@ import Foundation
 import UIKit
 import Firebase
 import FirebaseAuth
+import FacebookLogin
+import FacebookCore
+import FBSDKLoginKit
+import GoogleSignIn
+import TwitterKit
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, GIDSignInUIDelegate {
 
     var db: Firestore!
 
@@ -47,7 +52,7 @@ class ViewController: UIViewController {
         // [END setup]
         db = Firestore.firestore()
 
-        //GIDSignIn.sharedInstance().uiDelegate = self
+        GIDSignIn.sharedInstance().uiDelegate = self
 
     }
 
@@ -58,13 +63,13 @@ class ViewController: UIViewController {
         self.pictionisLabel.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 100).isActive = true
         self.pictionisLabel.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 0.8).isActive = true
 
-        self.googleButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        self.googleButton.centerYAnchor.constraint(equalTo: self.pictionisLabel.bottomAnchor, constant: 100).isActive = true
         self.googleButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
 
-        self.facebookButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        self.facebookButton.centerYAnchor.constraint(equalTo: self.googleButton.centerYAnchor).isActive = true
         self.facebookButton.rightAnchor.constraint(equalTo: self.googleButton.leftAnchor, constant: -10).isActive = true
 
-        self.twitterButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        self.twitterButton.centerYAnchor.constraint(equalTo: self.googleButton.centerYAnchor).isActive = true
         self.twitterButton.leftAnchor.constraint(equalTo: self.googleButton.rightAnchor, constant: 10).isActive = true
 
         self.mailTextField.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
@@ -104,6 +109,8 @@ class ViewController: UIViewController {
 
         button.setImage(UIImage(named: "facebook"), for: .normal)
 
+        button.addTarget(self, action: #selector(self.facebookLogin), for: .touchUpInside)
+
         return button
     }()
 
@@ -114,6 +121,8 @@ class ViewController: UIViewController {
 
         button.setImage(UIImage(named: "google"), for: .normal)
 
+        button.addTarget(self, action: #selector(self.googleLogin), for: .touchUpInside)
+
         return button
     }()
 
@@ -123,6 +132,8 @@ class ViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
 
         button.setImage(UIImage(named: "twitter"), for: .normal)
+
+        button.addTarget(self, action: #selector(self.twitterLogin), for: .touchUpInside)
 
         return button
     }()
@@ -296,6 +307,84 @@ class ViewController: UIViewController {
         }
 
     }
+
+    @objc func googleLogin() {
+
+        log.debug("google button pressed")
+        // Google+ signIn
+        GIDSignIn.sharedInstance().signIn()
+
+    }
+
+    // Launch facebook connection page
+    @objc func facebookLogin() {
+
+        let loginManager = LoginManager()
+
+        loginManager.logIn(readPermissions: [.publicProfile], viewController: self) { loginResult in
+            switch loginResult {
+            case .failed(let error):
+                log.error(error)
+            case .cancelled:
+                log.debug("User cancelled login.")
+            case .success:
+                self.facebookFirebaseAuth()
+            }
+        }
+
+    }
+
+    // Connect facebook with firebase
+    private func facebookFirebaseAuth() {
+
+        log.debug("Facebook Firebase Auth")
+
+        let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
+
+        Auth.auth().signInAndRetrieveData(with: credential) { (userInfo, error) in
+
+            guard let user = userInfo?.user else {
+                log.error(error)
+                return
+            }
+
+            //self.launchMainMenu(user: user, connectionWay: "Facebook")
+
+        }
+
+    }
+
+    // Launch twitter connection page
+    @objc func twitterLogin() {
+
+        TWTRTwitter.sharedInstance().logIn(completion: { (session, error) in
+            if session != nil {
+                self.twitterFirebaseAuth(session!)
+            } else {
+                log.debug("error: \(String(describing: error?.localizedDescription))")
+            }
+        })
+
+    }
+
+    // Twitter Connection with firebase
+    private func twitterFirebaseAuth(_ session: TWTRSession) {
+
+        let credential = TwitterAuthProvider.credential(withToken: session.authToken, secret: session.authTokenSecret)
+
+        Auth.auth().signInAndRetrieveData(with: credential) { (userInfo, error) in
+
+            guard let user = userInfo?.user else {
+                log.error(error)
+                return
+            }
+
+          //  self.launchMainMenu(user: user, connectionWay: "Twitter")
+
+        }
+
+    }
+
 
 }
 

@@ -16,13 +16,27 @@ import FBSDKLoginKit
 let log: XCGLogger      = XCGLogger.default
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
+
+        // Google+ Auth
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
+
+        // Twitter Auth
+        TWTRTwitter.sharedInstance().start(withConsumerKey: "eECvhgNkqeLVhVkrqC50S0Y4f", consumerSecret: "Xlt4ZF2fmGr6X6AON97CoDW2sFZlIKezrRa0dMOfHaMqSh8dWQ")
+
+        let defaultStore = Firestore.firestore()
+
+        log.debug("default firestore : \(defaultStore)")
+
+        Database.database().isPersistenceEnabled = true
+
         return true
     }
 
@@ -46,6 +60,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+
+    @available(iOS 9.0, *)
+    func application(_ application: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey: Any]) -> Bool {
+
+        TWTRTwitter.sharedInstance().application(application, open: url, options: options)
+
+        FBSDKApplicationDelegate.sharedInstance().application(application, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: nil)
+
+        return GIDSignIn.sharedInstance().handle(url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as? String, annotation: [:])
+
+    }
+
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
+
+        if let error = error {
+            log.error(error)
+            return
+        }
+
+        guard let authentication = user.authentication else { return }
+
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+
+        Auth.auth().signInAndRetrieveData(with: credential) { (userInfo, error) in
+
+            if let error = error {
+                log.error(error)
+                return
+            }
+
+            guard let user = userInfo?.user else {
+                log.error("no user")
+                return
+            }
+
+            log.debug("\(String(describing: user.email)) connected")
+
+            UserDefaults.standard.setValue("Google+", forKey: "connectionWay")
+            UserDefaults.standard.setValue(user.email, forKey: "userMail")
+            UserDefaults.standard.setValue(user.uid, forKey: "uid")
+            UserDefaults.standard.setValue("0", forKey: "caregiverId")
+            UserDefaults.standard.setValue("0", forKey: "patientId")
+
+            let navigationController = UINavigationController(rootViewController: ViewController())
+            navigationController.interactivePopGestureRecognizer!.isEnabled = false
+            navigationController.navigationBar.isHidden = true
+
+            self.window!.rootViewController = navigationController
+
+        }
+
+    }
+
+    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        // Perform any operations when the user disconnects from app here.
+        // ...
     }
 
 
