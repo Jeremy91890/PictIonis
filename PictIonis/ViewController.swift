@@ -25,7 +25,30 @@ class ViewController: UIViewController {
         self.view.addSubview(self.googleButton)
         self.view.addSubview(self.twitterButton)
 
+        self.view.addSubview(self.mailTextField)
+        self.view.addSubview(self.passwordTextField)
+        self.view.addSubview(self.errorLabel)
+
+        self.view.addSubview(self.signInButton)
+        self.view.addSubview(self.signUpButton)
+
         self.updateViewConstraints()
+
+        // Notify when keyboard appears
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+//        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+
+        self.updateViewConstraints()
+
+        // [START setup]
+        let settings = FirestoreSettings()
+
+        Firestore.firestore().settings = settings
+        // [END setup]
+        db = Firestore.firestore()
+
+        //GIDSignIn.sharedInstance().uiDelegate = self
+
     }
 
     override func updateViewConstraints() {
@@ -43,6 +66,29 @@ class ViewController: UIViewController {
 
         self.twitterButton.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         self.twitterButton.leftAnchor.constraint(equalTo: self.googleButton.rightAnchor, constant: 10).isActive = true
+
+        self.mailTextField.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        self.mailTextField.topAnchor.constraint(equalTo: self.googleButton.bottomAnchor, constant: 30).isActive = true
+        self.mailTextField.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        self.mailTextField.heightAnchor.constraint(equalToConstant: 56).isActive = true
+
+        self.passwordTextField.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        self.passwordTextField.topAnchor.constraint(equalTo: self.mailTextField.bottomAnchor, constant: 20).isActive = true
+        self.passwordTextField.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        self.passwordTextField.heightAnchor.constraint(equalToConstant: 56).isActive = true
+
+        self.errorLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        self.errorLabel.topAnchor.constraint(equalTo: self.passwordTextField.bottomAnchor, constant: 20).isActive = true
+
+        self.signUpButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: 100).isActive = true
+        self.signUpButton.topAnchor.constraint(equalTo: self.errorLabel.bottomAnchor, constant: 5).isActive = true
+        self.signUpButton.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        self.signUpButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+
+        self.signInButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor, constant: -100).isActive = true
+        self.signInButton.topAnchor.constraint(equalTo: self.errorLabel.bottomAnchor, constant: 5).isActive = true
+        self.signInButton.widthAnchor.constraint(equalToConstant: 180).isActive = true
+        self.signInButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
 
     }
 
@@ -93,6 +139,163 @@ class ViewController: UIViewController {
 
         return label
     }()
+
+    lazy var mailTextField: UITextField = {
+
+        let textField = UITextField()
+
+        textField.placeholder = "email"
+
+        textField.translatesAutoresizingMaskIntoConstraints = false
+
+        textField.textColor = UIColor.gray
+
+        textField.textAlignment = NSTextAlignment.center
+
+        textField.backgroundColor = UIColor.white
+
+        textField.layer.cornerRadius = 28
+
+        textField.keyboardType = .emailAddress
+
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
+        textField.spellCheckingType = .no
+
+        return textField
+    }()
+
+    lazy var passwordTextField: UITextField = {
+
+        let textField = UITextField()
+
+        textField.placeholder = "Mot de passe"
+
+        textField.translatesAutoresizingMaskIntoConstraints = false
+
+        textField.textAlignment = NSTextAlignment.center
+
+        textField.backgroundColor = UIColor.white
+
+        textField.textColor = UIColor.gray
+
+        textField.layer.cornerRadius = 28
+
+        textField.isSecureTextEntry = true
+
+        textField.keyboardType = .emailAddress
+
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
+        textField.spellCheckingType = .no
+
+        return textField
+    }()
+
+    lazy var errorLabel: UILabel = {
+
+        let label = UILabel()
+
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        label.textColor = UIColor.red
+
+        return label
+    }()
+
+    lazy var signInButton: UIButton = {
+
+        let button = UIButton()
+
+        button.backgroundColor = UIColor.cyan
+
+        button.setTitle("Se connecter", for: .normal)
+
+        button.layer.cornerRadius = 25
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        button.addTarget(self, action: #selector(self.authenticateByMail), for: .touchUpInside)
+
+        return button
+    }()
+
+    lazy var signUpButton: UIButton = {
+
+        let button = UIButton()
+
+        button.backgroundColor = UIColor.green
+
+        button.layer.cornerRadius = 25
+
+        button.setTitle("Créer le compte", for: .normal)
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+
+        button.addTarget(self, action: #selector(self.signUpByMail), for: .touchUpInside)
+
+        return button
+    }()
+
+    @objc func authenticateByMail() {
+
+        guard var email = self.mailTextField.text, self.mailTextField.text != "" else {
+            log.error("email field is empty")
+            self.errorLabel.text = "Adresse mail non valide"
+            return
+        }
+
+        guard let password = self.passwordTextField.text, self.passwordTextField.text != "" else {
+            log.error("password field is empty")
+            self.errorLabel.text = "Mot de passe non valide"
+            return
+        }
+
+        email = email.trimmingCharacters(in: .whitespaces)
+
+        Auth.auth().signIn(withEmail: email, password: password) { (userInfo, error) in
+
+            guard let userInfo = userInfo else {
+                log.error(error)
+                self.errorLabel.text = "Mauvais identifiants saisis"
+                return
+            }
+
+            //self.launchMainMenu(user: userInfo.user, connectionWay: "email")
+
+        }
+
+    }
+
+    @objc func signUpByMail() {
+
+        guard var email = self.mailTextField.text, self.mailTextField.text != "" else {
+            log.error("email field is empty")
+            self.errorLabel.text = "Adresse mail non valide"
+            return
+        }
+
+        guard let password = self.passwordTextField.text, self.passwordTextField.text != "" else {
+            log.error("password field is empty")
+            self.errorLabel.text = "Mot de passe non valide"
+            return
+        }
+
+        email = email.trimmingCharacters(in: .whitespaces)
+
+        Auth.auth().createUser(withEmail: email, password: password) { (userInfo, error) in
+
+            guard let userInfo = userInfo else {
+                log.error(error)
+                self.errorLabel.text = "Mauvais identifiants saisis"
+                return
+            }
+
+           // self.launchMainMenu(user: userInfo.user, connectionWay: "email")
+
+        }
+
+    }
 
 }
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>965816742742-roh5oqh3cpq9jbbv56ug8799klk0oss2.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.965816742742-roh5oqh3cpq9jbbv56ug8799klk0oss2</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDU-w2kYjp5zO3idr5Pxxr1odusZRJoc9k</string>
+	<key>GCM_SENDER_ID</key>
+	<string>965816742742</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>ETNA.PictIonis</string>
+	<key>PROJECT_ID</key>
+	<string>pictionis-3756d</string>
+	<key>STORAGE_BUCKET</key>
+	<string>pictionis-3756d.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:965816742742:ios:78941d712d0fa506</string>
+	<key>DATABASE_URL</key>
+	<string>https://pictionis-3756d.firebaseio.com</string>
+</dict>
+</plist>
