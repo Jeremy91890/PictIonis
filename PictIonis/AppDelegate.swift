@@ -14,6 +14,7 @@ import TwitterKit
 import FBSDKLoginKit
 
 let log: XCGLogger      = XCGLogger.default
+var navigation = UINavigationController()
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
@@ -36,6 +37,25 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         log.debug("default firestore : \(defaultStore)")
 
         Database.database().isPersistenceEnabled = true
+
+        let uid = UserDefaults.standard.value(forKey: "uid") as? String
+
+        var mainViewController: UIViewController = ViewController()
+
+        if uid != nil {
+            mainViewController = MainMenuViewController()
+        }
+
+        navigation = UINavigationController(rootViewController: mainViewController)
+        navigation.interactivePopGestureRecognizer!.isEnabled = false
+
+        // Set the root view controller of the app's window
+        window!.rootViewController = navigation
+
+        // Make the window visible
+        window!.makeKeyAndVisible()
+
+        UIApplication.shared.isStatusBarHidden = true
 
         return true
     }

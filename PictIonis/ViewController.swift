@@ -250,6 +250,8 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
 
     @objc func authenticateByMail() {
 
+        log.debug("authenticateByMail")
+
         guard var email = self.mailTextField.text, self.mailTextField.text != "" else {
             log.error("email field is empty")
             self.errorLabel.text = "Adresse mail non valide"
@@ -272,7 +274,8 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
                 return
             }
 
-            //self.launchMainMenu(user: userInfo.user, connectionWay: "email")
+            log.debug("push")
+            navigation.pushViewController(MainMenuViewController(), animated: true)
 
         }
 
@@ -302,7 +305,7 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
                 return
             }
 
-           // self.launchMainMenu(user: userInfo.user, connectionWay: "email")
+            navigation.pushViewController(MainMenuViewController(), animated: true)
 
         }
 
@@ -348,7 +351,7 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
                 return
             }
 
-            //self.launchMainMenu(user: user, connectionWay: "Facebook")
+            navigation.pushViewController(MainMenuViewController(), animated: true)
 
         }
 
@@ -379,6 +382,7 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
                 return
             }
 
+            navigation.pushViewController(MainMenuViewController(), animated: true)
           //  self.launchMainMenu(user: user, connectionWay: "Twitter")
 
         }
