@@ -42,41 +42,38 @@ class UserManager {
 
     init() {
 
-        // [START setup]
-        let settings = FirestoreSettings()
+        log.debug("Init")
 
-        Firestore.firestore().settings = settings
-        // [END setup]
+        ref = Database.database().reference()
 
-        db = Firestore.firestore()
+        self.load()
 
-        // Init collections
-        self.userCollection = db.collection("user")
     }
 
     func load() {
 
         users.removeAll()
 
-        self.userCollection.getDocuments { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-            } else {
-                for document in querySnapshot!.documents {
+        ref.child("user").observe(.value, with: { snapshot in
+            log.debug(snapshot)
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
 
-                    let data = document.data()
+                for child in snapshots {
 
-                    let login = data["login"] as! String
-                    let win = data["win"] as! Int
-                    let lose = data["lose"] as! Int
+                    let id = child.key
+                    let login = child.childSnapshot(forPath: "login").value as! String
+//                    let win = child.childSnapshot(forPath: "win").value as! Int
+//                    let lose = child.childSnapshot(forPath: "lose").value as! Int
 
-                    let user = User.init(id: document.documentID, login: login, win: win, lose: lose)
+                    let user = User.init(id: id, login: login, win: 0, lose: 0)
 
                     self.users.append(user)
+                    
                 }
                 self.onComplete?()
             }
-        }
+        })
+
     }
 
     func getUserBy(id: String) {
@@ -107,19 +104,9 @@ class UserManager {
 
     func create(user: User) {
 
-        self.userCollection.addDocument(data: [
-            "login": user.login,
-            "win": user.win,
-            "lose": user.lose,
-        ]) { err in
-            if let err = err {
-                log.debug("Error writing document: \(err)")
-            } else {
-                log.debug("Document successfully written!")
-                self.load()
-            }
-        }
-
+        self.ref.child("user/\(user.id)/login").setValue(user.login)
+        self.ref.child("user/\(user.id)/win").setValue(0)
+        self.ref.child("user/\(user.id)/lose").setValue(0)
     }
 
     func set(user: User) {

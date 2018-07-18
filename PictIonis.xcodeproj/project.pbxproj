@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		17022B3F96A24FFEE7ACEB69 /* Pods_PictIonis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DD1C13DA5CAC9CE3F9E6BB1D /* Pods_PictIonis.framework */; };
 		3EAA2A359E15061529787EBA /* Pods_PictIonisTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AE56EA29E7A427F29FF756F7 /* Pods_PictIonisTests.framework */; };
+		3F32201A20FF6C5900CE145A /* NewGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F32201920FF6C5900CE145A /* NewGameViewController.swift */; };
 		3F3946E620F611910011471D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3946E520F611910011471D /* User.swift */; };
 		3F3946EA20F6130D0011471D /* UserManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F3946E920F6130D0011471D /* UserManager.swift */; };
 		3F6974D020F4A547002B4F10 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3F6974CF20F4A547002B4F10 /* GoogleService-Info.plist */; };
@@ -42,6 +43,7 @@
 
 /* Begin PBXFileReference section */
 		268F2582464C9E0B79507264 /* Pods-PictIonisUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PictIonisUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PictIonisUITests/Pods-PictIonisUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		3F32201920FF6C5900CE145A /* NewGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameViewController.swift; sourceTree = "<group>"; };
 		3F3946E520F611910011471D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		3F3946E920F6130D0011471D /* UserManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserManager.swift; sourceTree = "<group>"; };
 		3F6974CF20F4A547002B4F10 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -132,6 +134,7 @@
 				3F6974D120F4BBDA002B4F10 /* MainMenuViewController.swift */,
 				3F3946E520F611910011471D /* User.swift */,
 				3F3946E920F6130D0011471D /* UserManager.swift */,
+				3F32201920FF6C5900CE145A /* NewGameViewController.swift */,
 			);
 			path = PictIonis;
 			sourceTree = "<group>";
@@ -454,6 +457,7 @@
 				3F6974D220F4BBDA002B4F10 /* MainMenuViewController.swift in Sources */,
 				3FA329B620EFA9A7006FB1B6 /* ViewController.swift in Sources */,
 				3FA329B420EFA9A7006FB1B6 /* AppDelegate.swift in Sources */,
+				3F32201A20FF6C5900CE145A /* NewGameViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
