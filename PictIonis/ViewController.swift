@@ -30,6 +30,7 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
         self.view.addSubview(self.googleButton)
         self.view.addSubview(self.twitterButton)
 
+        self.view.addSubview(self.loginTextField)
         self.view.addSubview(self.mailTextField)
         self.view.addSubview(self.passwordTextField)
         self.view.addSubview(self.errorLabel)
@@ -72,8 +73,13 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
         self.twitterButton.centerYAnchor.constraint(equalTo: self.googleButton.centerYAnchor).isActive = true
         self.twitterButton.leftAnchor.constraint(equalTo: self.googleButton.rightAnchor, constant: 10).isActive = true
 
+        self.loginTextField.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        self.loginTextField.topAnchor.constraint(equalTo: self.googleButton.bottomAnchor, constant: 30).isActive = true
+        self.loginTextField.widthAnchor.constraint(equalToConstant: 300).isActive = true
+        self.loginTextField.heightAnchor.constraint(equalToConstant: 56).isActive = true
+
         self.mailTextField.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        self.mailTextField.topAnchor.constraint(equalTo: self.googleButton.bottomAnchor, constant: 30).isActive = true
+        self.mailTextField.topAnchor.constraint(equalTo: self.loginTextField.bottomAnchor, constant: 30).isActive = true
         self.mailTextField.widthAnchor.constraint(equalToConstant: 300).isActive = true
         self.mailTextField.heightAnchor.constraint(equalToConstant: 56).isActive = true
 
@@ -149,6 +155,31 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
         label.textAlignment = .center
 
         return label
+    }()
+
+    lazy var loginTextField: UITextField = {
+
+        let textField = UITextField()
+
+        textField.placeholder = "login"
+
+        textField.translatesAutoresizingMaskIntoConstraints = false
+
+        textField.textColor = UIColor.gray
+
+        textField.textAlignment = NSTextAlignment.center
+
+        textField.backgroundColor = UIColor.white
+
+        textField.layer.cornerRadius = 28
+
+        textField.keyboardType = .emailAddress
+
+        textField.autocorrectionType = .no
+        textField.autocapitalizationType = .none
+        textField.spellCheckingType = .no
+
+        return textField
     }()
 
     lazy var mailTextField: UITextField = {
@@ -289,6 +320,12 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
             return
         }
 
+        guard var login = self.loginTextField.text, self.loginTextField.text != "" else {
+            log.error("login field is empty")
+            self.errorLabel.text = "Veuillez saisir un login"
+            return
+        }
+
         guard let password = self.passwordTextField.text, self.passwordTextField.text != "" else {
             log.error("password field is empty")
             self.errorLabel.text = "Mot de passe non valide"
@@ -305,6 +342,9 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
                 return
             }
 
+            let user = User.init(id: userInfo.user.uid, login: login, win: 0, lose: 0)
+            UserManager.shared.create(user: user)
+            
             navigation.pushViewController(MainMenuViewController(), animated: true)
 
         }
