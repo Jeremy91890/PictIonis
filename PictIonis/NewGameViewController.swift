@@ -24,6 +24,8 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
 
         self.view.addSubview(tableView)
+        self.view.addSubview(startButton)
+        self.view.addSubview(playerLabel)
 
         self.tableView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -54,6 +56,14 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.tableView.widthAnchor.constraint(equalTo: self.view.widthAnchor).isActive = true
         self.tableView.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.5).isActive = true
 
+        self.startButton.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        self.startButton.topAnchor.constraint(equalTo: self.tableView.bottomAnchor, constant: 10).isActive = true
+        self.startButton.widthAnchor.constraint(equalTo: self.tableView.widthAnchor, multiplier: 0.7).isActive = true
+        self.startButton.heightAnchor.constraint(equalTo: self.view.heightAnchor, multiplier: 0.1).isActive = true
+
+        self.playerLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
+        self.playerLabel.bottomAnchor.constraint(equalTo: self.tableView.topAnchor, constant: -20).isActive = true
+
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -71,4 +81,29 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         print("You selected cell #\(indexPath.row)!")
     }
+
+    lazy var playerLabel: UILabel = {
+        let label = UILabel()
+
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.text = "Avec quel joueur voulez-vous jouer ?"
+
+        return label
+    }()
+
+    lazy var startButton: UIButton = {
+        let button = UIButton()
+
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.backgroundColor = UIColor.green
+        button.setTitle("Lancer la partie", for: .normal)
+        button.addTarget(self, action: #selector(startGame), for: .touchUpInside)
+
+        return button
+    }()
+
+    @objc func startGame() {
+
+    }
+
 }

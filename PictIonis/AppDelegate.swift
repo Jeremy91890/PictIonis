@@ -40,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
         let uid = UserDefaults.standard.value(forKey: "uid") as? String
 
-        var mainViewController: UIViewController = ViewController()
+        var mainViewController: UIViewController = MainMenuViewController()
 
         if uid != nil {
             mainViewController = MainMenuViewController()
@@ -124,7 +124,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             UserDefaults.standard.setValue("0", forKey: "caregiverId")
             UserDefaults.standard.setValue("0", forKey: "patientId")
 
-            let navigationController = UINavigationController(rootViewController: ViewController())
+            let navigationController = UINavigationController(rootViewController: MainMenuViewController())
             navigationController.interactivePopGestureRecognizer!.isEnabled = false
             navigationController.navigationBar.isHidden = true
 
