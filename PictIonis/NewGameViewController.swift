@@ -104,6 +104,9 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     @objc func startGame() {
 
+        let game = GameModel.init(id: "1", players: ["2"])
+        self.navigationController?.pushViewController(GameViewController(game: game), animated: true)
+        
     }
 
 }

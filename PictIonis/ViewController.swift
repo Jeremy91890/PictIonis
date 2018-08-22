@@ -306,6 +306,8 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
             }
 
             log.debug("push")
+            UserDefaults.standard.setValue(userInfo.user.uid, forKey: "uid")
+
             navigation.pushViewController(MainMenuViewController(), animated: true)
 
         }
@@ -344,7 +346,9 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
 
             let user = User.init(id: userInfo.user.uid, login: login, win: 0, lose: 0)
             UserManager.shared.create(user: user)
-            
+
+            UserDefaults.standard.setValue(user.id, forKey: "uid")
+
             navigation.pushViewController(MainMenuViewController(), animated: true)
 
         }
@@ -391,6 +395,8 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
                 return
             }
 
+            UserDefaults.standard.setValue(userInfo?.user.uid, forKey: "uid")
+
             navigation.pushViewController(MainMenuViewController(), animated: true)
 
         }
@@ -421,6 +427,8 @@ class ViewController: UIViewController, GIDSignInUIDelegate {
                 log.error(error)
                 return
             }
+
+            UserDefaults.standard.setValue(userInfo?.user.uid, forKey: "uid")
 
             navigation.pushViewController(MainMenuViewController(), animated: true)
           //  self.launchMainMenu(user: user, connectionWay: "Twitter")

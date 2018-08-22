@@ -40,10 +40,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
         let uid = UserDefaults.standard.value(forKey: "uid") as? String
 
-        var mainViewController: UIViewController = MainMenuViewController()
+        var mainViewController: UIViewController = ViewController()
 
         if uid != nil {
-            mainViewController = MainMenuViewController()
+            mainViewController = ViewController()
         }
 
         navigation = UINavigationController(rootViewController: mainViewController)
