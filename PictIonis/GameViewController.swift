@@ -13,13 +13,11 @@ class GameViewController: UIViewController {
 
     var game: GameModel!
     
-
     convenience init(game: GameModel) {
         self.init()
 
         self.game = game
 
-         GameManager.shared.create(game: game)
     }
 
     override func viewDidLoad() {
@@ -27,7 +25,14 @@ class GameViewController: UIViewController {
 
         self.view.addSubview(self.drawView)
 
+        drawView.delegate = self
+        
         self.updateViewConstraints()
+
+        GameManager.shared.onReceiveLine = { lines in
+            self.drawView.lines = lines
+        }
+
     }
 
     override func updateViewConstraints() {
@@ -41,7 +46,7 @@ class GameViewController: UIViewController {
 
     }
 
-    lazy var drawView: UIView = {
+    lazy var drawView: DrawView = {
 
         let drawView = DrawView()
 
@@ -50,5 +55,12 @@ class GameViewController: UIViewController {
         return drawView
     }()
 
+}
+
+extension GameViewController: DrawViewDelegate {
+
+    func addLine(line: Line) {
+        GameManager.shared.addLine(line: line, game: self.game)
+    }
 
 }

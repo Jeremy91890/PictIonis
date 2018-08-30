@@ -45,6 +45,8 @@ class MainMenuViewController: UIViewController {
 
     @objc func gameSelectionModal() {
 
+        let gameSelection = GameSelectionViewController()
+        self.show(gameSelection, sender: self)
     }
 
     lazy var newGameButton: UIButton = {

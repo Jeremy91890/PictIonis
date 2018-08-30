@@ -13,6 +13,7 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     var tableView: UITableView = UITableView()
     var users: [User] = []
+    var selectedUsers: [User] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -71,15 +72,21 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell:UITableViewCell = self.tableView.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
+
+        var cell: UITableViewCell = self.tableView.dequeueReusableCell(withIdentifier: "cell") as! UITableViewCell
 
         cell.textLabel?.text = self.users[indexPath.row].login
 
         return cell
     }
 
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        print("You selected cell #\(indexPath.row)!")
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.accessoryType = .checkmark
+            self.selectedUsers.append(self.users[indexPath.row])
+        }
+
     }
 
     lazy var playerLabel: UILabel = {
@@ -104,7 +111,17 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     @objc func startGame() {
 
-        let game = GameModel.init(id: "1", players: ["2"])
+        var players: [String] = []
+
+        players.append(UserDefaults.standard.value(forKey: "uid") as! String)
+
+        for user in self.selectedUsers {
+            players.append(user.id)
+        }
+
+        let game = GameModel.init(players: players)
+        GameManager.shared.create(game: game)
+
         self.navigationController?.pushViewController(GameViewController(game: game), animated: true)
         
     }

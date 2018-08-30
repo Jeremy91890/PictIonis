@@ -9,7 +9,15 @@
 import Foundation
 import UIKit
 
+protocol DrawViewDelegate: class {
+
+    func addLine(line: Line)
+
+}
+
 class DrawView: UIView {
+
+    weak var delegate: DrawViewDelegate?
 
     // some parameters of how thick a line to draw 15 seems to work
     // and we have white drawings on black background just like MNIST needs its input
@@ -18,20 +26,18 @@ class DrawView: UIView {
 
     // we will keep touches made by user in view in these as a record so we can draw them.
     //var lines: [Line] = []
-    var lines: [Line] = [Line.init(start: CGPoint.init(x: 1, y: 34), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 65, y: 34), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 122, y: 34), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 34, y: 64), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 44, y: 24), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 55, y: 14), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 56, y: 84), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 87, y: 94), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 99, y: 44), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 67, y: 34), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 65, y: 24), end: CGPoint.init(x: 55, y: 99)),
-                         Line.init(start: CGPoint.init(x: 43, y: 44), end: CGPoint.init(x: 55, y: 99))]
+    var lines: [Line] = []
 
     var lastPoint: CGPoint!
+
+    convenience init(isDrawer: Bool) {
+        self.init()
+
+        if isDrawer == false {
+            self.isUserInteractionEnabled = false
+        }
+
+    }
 
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         lastPoint = touches.first!.location(in: self)
@@ -44,7 +50,8 @@ class DrawView: UIView {
         lines.append(line)
 
         // TODO change with delegate
-        GameManager.shared.addLine(line: line)
+        delegate?.addLine(line: line)
+       // GameManager.shared.addLine(line: line)
         lastPoint = newPoint
         // make a draw call
         setNeedsDisplay()
@@ -65,7 +72,6 @@ class DrawView: UIView {
         color.set()
         drawPath.stroke()
     }
-
 
     /**
      This function gets the pixel data of the view so we can put it in MTLTexture
@@ -97,7 +103,7 @@ class DrawView: UIView {
 /**
  2 points can give a line and this class is just for that purpose, it keeps a record of a line
  */
-class Line{
+class Line {
     var start, end: CGPoint
 
     init(start: CGPoint, end: CGPoint) {
