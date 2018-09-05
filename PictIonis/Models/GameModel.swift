@@ -11,10 +11,10 @@ import Foundation
 class GameModel {
 
     var id: String
-    var players: [String]
+    var players: [Player]
 //    var player_2: User
 //
-    init(id: String, players: [String]) {
+    init(id: String, players: [Player]) {
 
         self.id = id
         self.players = players

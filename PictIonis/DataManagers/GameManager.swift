@@ -30,10 +30,19 @@ class GameManager {
 
     var onReceiveLine: ((_ lines: [Line]) -> Void)?
 
-    var onReceiveUser: ((_ user: User) -> Void)?
+    var onReceiveGame: ((_ game: GameModel) -> Void)?
+
+    var onReceiveUserGames: ((_ game: [GameModel]) -> Void)?
+
+    var gameById: GameModel?
+    //var onReceiveUser: ((_ user: User) -> Void)?
 
     var userCollection: CollectionReference!
     var gameCollection: CollectionReference!
+
+    var currentGame: String?
+
+    var linesToDraw: [Line] = []
 
     //
     // MARK: - SharedInstance
@@ -51,67 +60,111 @@ class GameManager {
 
         ref = Database.database().reference()
 
-        self.load()
-
     }
 
-    func load() {
+    func loadUserGames() {
 
+        log.debug("LOAD")
         ref.child("games").observe(.value, with: { snapshot in
-            log.debug(snapshot)
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+
+                var games: [GameModel] = []
 
                 for child in snapshots {
 
                     let id = child.key
-                    //let adversaire = child.childSnapshot(forPath: "adversaire").value as! String
-                    //                    let win = child.childSnapshot(forPath: "win").value as! Int
-                    //                    let lose = child.childSnapshot(forPath: "lose").value as! Int
+                    var players: [Player] = []
 
-                    let players: [String] = []
-//                    for player in child.childSnapshot(forPath: players) {
-//                        players.append(<#T##newElement: Any##Any#>)
-//                    }
-                    let game = GameModel.init(id: id, players: players)
+                    self.ref.child("games/\(id)/players").observe(.value, with: { snapshot in
 
-                    self.userGames.append(game)
+                        if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+
+                            for child in snapshots {
+
+                                log.debug("child in get game by id\(child)")
+
+                                let id = child.key
+
+                                guard let nbDraw = child.childSnapshot(forPath: "nbDraw").value as? Int else {
+                                    return
+                                }
+
+                                guard let isDrawing = child.childSnapshot(forPath: "isDrawing").value as? Bool else {
+                                    return
+                                }
+
+                                guard let points = child.childSnapshot(forPath: "points").value as? Int else {
+                                    return
+                                }
+
+
+                                let player = Player.init(id: id, isDrawing: isDrawing, nbDraw: nbDraw, points: points)
+
+                                players.append(player)
+
+                            }
+
+                            let game = GameModel.init(id: id, players: players)
+                            games.append(game)
+                        }
+
+                        self.onReceiveUserGames!(games)
+
+                    })
 
                 }
-                self.onComplete?()
+
             }
         })
 
     }
 
-    func getGameBy(id: String) {
+    func startGame(id: String) {
 
-        log.debug(id)
+        var players: [Player] = []
 
-        self.gameCollection.whereField("id", isEqualTo: id).getDocuments { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
-            }
-            else {
-                for document in querySnapshot!.documents where document.documentID == id {
+        ref.child("games/\(id)/players").observe(.value, with: { snapshot in
 
-                    let data = document.data()
-                    let login = data["login"] as! String
-                    let win = data["win"] as! Int
-                    let lose = data["lose"] as! Int
+            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
 
-                    let user = User.init(id: id, login: login, win: win, lose: lose)
-                    self.onReceiveUser?(user)
+                log.debug("get game \(snapshots)")
+                for child in snapshots {
 
+                    log.debug("child in get game by id\(child)")
+                    //let id = child.key
+
+                    let id = child.key
+
+                    guard let nbDraw = child.childSnapshot(forPath: "nbDraw").value as? Int else {
+                        return
+                    }
+
+                    guard let isDrawing = child.childSnapshot(forPath: "isDrawing").value as? Bool else {
+                        return
+                    }
+
+                    guard let points = child.childSnapshot(forPath: "points").value as? Int else {
+                        return
+                    }
+
+                    let player = Player.init(id: id, isDrawing: isDrawing, nbDraw: nbDraw, points: points)
+
+                    players.append(player)
+                    
                 }
+
             }
 
-        }
+            let game = GameModel.init(id: id, players: players)
+
+            self.onReceiveGame?(game)
+
+        })
 
     }
 
-    func addLine(line: Line, game: GameModel) {
-       // self.ref.child("games/\(game.id)/currentDraw").
-        let point = self.ref.child("games/\(game.id)/currentDraw").childByAutoId()
+    func addLine(line: Line, gameID: String) {
+        let point = self.ref.child("games/\(gameID)/currentDraw").childByAutoId()
 
         point.child("start_x").setValue(line.start.x)
         point.child("start_y").setValue(line.start.y)
@@ -120,68 +173,112 @@ class GameManager {
 
     }
 
-    func getDraw(game: GameModel) -> [Line] {
+//    func getAddedDraws(gameID: String) {
+//
+//        var lines: [Line] = []
+//
+//        log.debug("game Id \(gameID)")
+//        ref.child("games/\(gameID)/currentDraw").observe(.childAdded, with: { snapshot in
+//
+//            if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
+//
+//                log.debug("draw snapshot \(snapshots)")
+//                for child in snapshots {
+//
+//                    log.debug("draw snapshot child \(child)")
+//                    //let id = child.key
+//
+//                    log.debug("draw snapshot child \(child)")
+//                    //let id = child.key
+//                    guard let start_x = child.childSnapshot(forPath: "start_x").value as? Double else {
+//                        return
+//                    }
+//                    guard let start_y = child.childSnapshot(forPath: "start_y").value as? Double else {
+//                        return
+//                    }
+//                    guard let end_x = child.childSnapshot(forPath: "end_x").value as? Double else {
+//                        return
+//                    }
+//                    guard let end_y = child.childSnapshot(forPath: "end_y").value as? Double else {
+//                        return
+//                    }
+//
+//                    let line = Line.init(start: CGPoint.init(x: start_x, y: start_y), end: CGPoint.init(x: end_x, y: end_y))
+//
+//                    lines.append(line)
+//                    self.onReceiveLine?(lines)
+//
+//                }
+//            }
+//        })
+//    }
 
-        var lines: [Line] = []
+    func getDraw(gameID: String) {
 
-        ref.child("games/\(game.id)/currentDraw").observe(.value, with: { snapshot in
-            
+        log.debug("game Id \(gameID)")
+
+        ref.child("games/\(gameID)/currentDraw").observe(.value, with: { (snapshot) -> Void in
+            var lines: [Line] = []
+
             if let snapshots = snapshot.children.allObjects as? [DataSnapshot] {
 
+                log.debug("draw snapshot \(snapshots)")
                 for child in snapshots {
 
-                    let id = child.key
-
-                    let start_x = child.childSnapshot(forPath: "start_x").value as! Int
-                    let start_y = child.childSnapshot(forPath: "start_y").value as! Int
-                    let end_x = child.childSnapshot(forPath: "end_x").value as! Int
-                    let end_y = child.childSnapshot(forPath: "end_y").value as! Int
+                    log.debug("draw snapshot child \(child)")
+                    //let id = child.key
+                    guard let start_x = child.childSnapshot(forPath: "start_x").value as? Double else {
+                        return
+                    }
+                    guard let start_y = child.childSnapshot(forPath: "start_y").value as? Double else {
+                        return
+                    }
+                    guard let end_x = child.childSnapshot(forPath: "end_x").value as? Double else {
+                        return
+                    }
+                    guard let end_y = child.childSnapshot(forPath: "end_y").value as? Double else {
+                        return
+                    }
 
                     let line = Line.init(start: CGPoint.init(x: start_x, y: start_y), end: CGPoint.init(x: end_x, y: end_y))
 
                     lines.append(line)
                 }
-                self.onReceiveLine?(lines)
+
             }
+            self.linesToDraw = lines
+            self.onReceiveLine?(self.linesToDraw)
+
         })
 
-        return lines
     }
 
-    func create(players: [String]) -> GameModel {
+    func create(playersID: [String]) {
+
+        log.debug("create")
+        var players: [Player] = []
 
         let newGame = self.ref.child("games").childByAutoId()
+        self.currentGame = newGame.key
 
-        for player in players {
-            newGame.child("\(player)/isDrawing").setValue(false)
-            newGame.child("\(player)/nbDraw").setValue(0)
-            newGame.child("\(player)/points").setValue(0)
+        players.append(Player.init(id: self.userId, isDrawing: true, nbDraw: 0, points: 0))
 
+        for player in playersID {
+            players.append(Player.init(id: player, isDrawing: false, nbDraw: 0, points: 0))
         }
 
-        let gameModel = GameModel.init(id: newGame.key, players: <#T##[String]#>)
+        for player in players {
+            newGame.child("/players/\(player.id)/points").setValue(player.points)
+            newGame.child("/players/\(player.id)/isDrawing").setValue(player.isDrawing)
+            newGame.child("/players/\(player.id)/nbDraw").setValue(player.nbDraw)
+        }
 
-     //   self.ref.child("games/\(game.id)/login").setValue("hello test game")
-//        self.ref.child("user/\(user.id)/win").setValue(0)
-//        self.ref.child("user/\(user.id)/lose").setValue(0)
+        let gameModel = GameModel.init(id: newGame.key, players: players)
+
+
+        self.onReceiveGame?(gameModel)
+
     }
-
-//    func set(game: GameModel) {
-//
-//        self.gameCollection.document(game.id).setData([
-//            "login": user.login,
-//            "win": user.win,
-//            "lose": user.lose,
-//            ]) { err in
-//                if let err = err {
-//                    log.debug("Error writing document: \(err)")
-//                } else {
-//                    log.debug("Document successfully written!")
-//                    self.load()
-//                }
-//        }
-//
-//    }
 
     func remove(_ id: String) {
 
@@ -191,9 +288,11 @@ class GameManager {
             }
             else {
                 log.debug("Document successfully removed")
-                self.load()
+               // self.load()
             }
         }
     }
+
+    // TODO Get game by id, quand on rejoind une partie
 
 }

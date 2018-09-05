@@ -60,17 +60,23 @@ class DrawView: UIView {
     override func draw(_ rect: CGRect) {
         super.draw(rect)
 
+        log.debug("DRAW")
         let drawPath = UIBezierPath()
         drawPath.lineCapStyle = .round
 
         for line in lines{
+            log.debug("DRAW Line")
+
             drawPath.move(to: line.start)
             drawPath.addLine(to: line.end)
+
         }
 
         drawPath.lineWidth = linewidth
         color.set()
         drawPath.stroke()
+        setNeedsDisplay()
+
     }
 
     /**

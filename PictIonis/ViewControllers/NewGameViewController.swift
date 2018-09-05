@@ -119,10 +119,9 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
             players.append(user.id)
         }
 
-        let game = GameModel.init(players: players)
-        GameManager.shared.create(game: game)
+        GameManager.shared.create(playersID: players)
 
-        self.navigationController?.pushViewController(GameViewController(game: game), animated: true)
+        self.navigationController?.pushViewController(GameViewController.init(gameID: GameManager.shared.currentGame!), animated: true)
         
     }
 

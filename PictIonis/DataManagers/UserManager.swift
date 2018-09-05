@@ -76,9 +76,11 @@ class UserManager {
 
     }
 
-    func getUserBy(id: String) {
+    func getUserBy(id: String) -> User {
 
         log.debug(id)
+
+        var result: User!
 
         self.userCollection.whereField("id", isEqualTo: id).getDocuments { (querySnapshot, err) in
             if let err = err {
@@ -95,11 +97,12 @@ class UserManager {
                     let user = User.init(id: id, login: login, win: win, lose: lose)
                     self.onReceiveUser?(user)
 
+                    result = user
                 }
             }
 
         }
-
+        return result
     }
 
     func create(user: User) {

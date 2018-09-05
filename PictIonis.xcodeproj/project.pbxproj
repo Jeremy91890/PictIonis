@@ -26,6 +26,8 @@
 		3FA329BE20EFA9A8006FB1B6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3FA329BC20EFA9A8006FB1B6 /* LaunchScreen.storyboard */; };
 		3FA329C920EFA9A9006FB1B6 /* PictIonisTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA329C820EFA9A9006FB1B6 /* PictIonisTests.swift */; };
 		3FA329D420EFA9A9006FB1B6 /* PictIonisUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FA329D320EFA9A9006FB1B6 /* PictIonisUITests.swift */; };
+		3FB9E7B6213FD29C00DA8E5C /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9E7B5213FD29C00DA8E5C /* Player.swift */; };
+		3FB9E7B82140105D00DA8E5C /* GuessViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3FB9E7B72140105D00DA8E5C /* GuessViewController.swift */; };
 		4E8ECBD75266F372B28F8366 /* Pods_PictIonisUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 81BBF8DA4751D2D9B9CD738F /* Pods_PictIonisUITests.framework */; };
 /* End PBXBuildFile section */
 
@@ -71,6 +73,8 @@
 		3FA329CF20EFA9A9006FB1B6 /* PictIonisUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PictIonisUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3FA329D320EFA9A9006FB1B6 /* PictIonisUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PictIonisUITests.swift; sourceTree = "<group>"; };
 		3FA329D520EFA9A9006FB1B6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3FB9E7B5213FD29C00DA8E5C /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		3FB9E7B72140105D00DA8E5C /* GuessViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GuessViewController.swift; sourceTree = "<group>"; };
 		4373362A7E8C1CD62F727925 /* Pods-PictIonisTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PictIonisTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PictIonisTests/Pods-PictIonisTests.debug.xcconfig"; sourceTree = "<group>"; };
 		81BBF8DA4751D2D9B9CD738F /* Pods_PictIonisUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PictIonisUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		838D8CB9211A99D0607D2E63 /* Pods-PictIonis.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PictIonis.debug.xcconfig"; path = "Pods/Target Support Files/Pods-PictIonis/Pods-PictIonis.debug.xcconfig"; sourceTree = "<group>"; };
@@ -143,6 +147,9 @@
 		3FA329B220EFA9A7006FB1B6 /* PictIonis */ = {
 			isa = PBXGroup;
 			children = (
+				3FB9E7B4213FD21200DA8E5C /* Views */,
+				3FB9E7B3213FD1F100DA8E5C /* ViewControllers */,
+				3FB9E7B2213FD1EB00DA8E5C /* Models */,
 				3F9AE4D8212D5CC500502D4A /* DataManagers */,
 				3F6974CF20F4A547002B4F10 /* GoogleService-Info.plist */,
 				3FA329B320EFA9A7006FB1B6 /* AppDelegate.swift */,
@@ -151,13 +158,6 @@
 				3FA329BA20EFA9A8006FB1B6 /* Assets.xcassets */,
 				3FA329BC20EFA9A8006FB1B6 /* LaunchScreen.storyboard */,
 				3FA329BF20EFA9A8006FB1B6 /* Info.plist */,
-				3F6974D120F4BBDA002B4F10 /* MainMenuViewController.swift */,
-				3F3946E520F611910011471D /* User.swift */,
-				3F32201920FF6C5900CE145A /* NewGameViewController.swift */,
-				3F9AE4DC212D5D1F00502D4A /* GameModel.swift */,
-				3F9AE4DE212D650E00502D4A /* DrawView.swift */,
-				3F9AE4E0212D78C200502D4A /* GameViewController.swift */,
-				3FA1EEED2136D4CD00337B2D /* GameSelectionViewController.swift */,
 			);
 			path = PictIonis;
 			sourceTree = "<group>";
@@ -178,6 +178,36 @@
 				3FA329D520EFA9A9006FB1B6 /* Info.plist */,
 			);
 			path = PictIonisUITests;
+			sourceTree = "<group>";
+		};
+		3FB9E7B2213FD1EB00DA8E5C /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				3F9AE4DC212D5D1F00502D4A /* GameModel.swift */,
+				3F3946E520F611910011471D /* User.swift */,
+				3FB9E7B5213FD29C00DA8E5C /* Player.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		3FB9E7B3213FD1F100DA8E5C /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				3F6974D120F4BBDA002B4F10 /* MainMenuViewController.swift */,
+				3F32201920FF6C5900CE145A /* NewGameViewController.swift */,
+				3F9AE4E0212D78C200502D4A /* GameViewController.swift */,
+				3FA1EEED2136D4CD00337B2D /* GameSelectionViewController.swift */,
+				3FB9E7B72140105D00DA8E5C /* GuessViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		3FB9E7B4213FD21200DA8E5C /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				3F9AE4DE212D650E00502D4A /* DrawView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 		6C3ED511B15B05317E8E3E08 /* Frameworks */ = {
@@ -479,12 +509,14 @@
 				3F3946EA20F6130D0011471D /* UserManager.swift in Sources */,
 				3F3946E620F611910011471D /* User.swift in Sources */,
 				3F6974D220F4BBDA002B4F10 /* MainMenuViewController.swift in Sources */,
+				3FB9E7B6213FD29C00DA8E5C /* Player.swift in Sources */,
 				3FA1EEEE2136D4CD00337B2D /* GameSelectionViewController.swift in Sources */,
 				3F9AE4DB212D5CE900502D4A /* GameManager.swift in Sources */,
 				3FA329B620EFA9A7006FB1B6 /* ViewController.swift in Sources */,
 				3F9AE4DF212D650E00502D4A /* DrawView.swift in Sources */,
 				3F9AE4DD212D5D1F00502D4A /* GameModel.swift in Sources */,
 				3FA329B420EFA9A7006FB1B6 /* AppDelegate.swift in Sources */,
+				3FB9E7B82140105D00DA8E5C /* GuessViewController.swift in Sources */,
 				3F32201A20FF6C5900CE145A /* NewGameViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

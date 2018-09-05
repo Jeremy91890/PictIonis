@@ -11,12 +11,13 @@ import UIKit
 
 class GameViewController: UIViewController {
 
-    var game: GameModel!
+    var gameID: String?
     
-    convenience init(game: GameModel) {
+    convenience init(gameID: String) {
         self.init()
 
-        self.game = game
+        self.gameID = gameID
+       // GameManager.shared.getDraw(gameID: self.gameID!)
 
     }
 
@@ -29,9 +30,16 @@ class GameViewController: UIViewController {
         
         self.updateViewConstraints()
 
-        GameManager.shared.onReceiveLine = { lines in
-            self.drawView.lines = lines
-        }
+//        GameManager.shared.onReceiveGame = { game in
+//            log.debug("On receive game")
+//            self.gameID = gameID
+//            GameManager.shared.getDraw(gameID: self.gameID!)
+//        }
+
+//        GameManager.shared.onReceiveLine = { lines in
+//            self.drawView.lines = lines
+//            self.drawView.draw(self.drawView.frame)
+//        }
 
     }
 
@@ -42,7 +50,6 @@ class GameViewController: UIViewController {
         self.drawView.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         self.drawView.widthAnchor.constraint(equalToConstant: 300).isActive = true
         self.drawView.heightAnchor.constraint(equalToConstant: 500).isActive = true
-
 
     }
 
@@ -60,7 +67,8 @@ class GameViewController: UIViewController {
 extension GameViewController: DrawViewDelegate {
 
     func addLine(line: Line) {
-        GameManager.shared.addLine(line: line, game: self.game)
+
+        GameManager.shared.addLine(line: line, gameID: self.gameID!)
     }
 
 }
